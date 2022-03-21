@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewis.teamget.mapper.CompetitionMapper">
+    <!-- 添加比赛-->
+    <insert id="addCompetition" parameterType="com.lewis.teamget.entity.Competition">
+        insert into competition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- 出现在最后的字段，会多一个逗号，出现语法错误-->
+            <if test="competitionId != null">
+                competitionId,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="cover != null">
+                cover,
+            </if>
+            <if test="mkContent != null">
+                mkContent,
+            </if>
+            <if test="htmlContent != null">
+                htmlContent,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="summary != null">
+                summary,
+            </if>
+            <if test="recommend != null">
+                recommend,
+            </if>
+            <if test="link != null">
+                link,
+            </if>
+            <if test="signUpTime != null">
+                signUpTime,
+            </if>
+            <if test="participateTime != null">
+                participateTime,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="college != null">
+                college,
+            </if>
+            <if test="deadline != null">
+                deadline,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="competitionId != null">
+                #{competitionId},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="cover != null">
+                #{cover},
+            </if>
+            <if test="mkContent != null">
+                #{mkContent},
+            </if>
+            <if test="htmlContent != null">
+                #{htmlContent},
+            </if>
+            <if test="level != null">
+                #{level},
+            </if>
+            <if test="summary != null">
+                #{summary},
+            </if>
+            <if test="recommend != null">
+                #{recommend},
+            </if>
+            <if test="link != null">
+                #{link},
+            </if>
+            <if test="signUpTime != null">
+                #{signUpTime},
+            </if>
+            <if test="participateTime != null">
+                #{participateTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="college != null">
+                #{college},
+            </if>
+            <if test="deadline != null">
+                #{deadline},
+            </if>
+        </trim>
+    </insert>
+    <!-- 通过时间查找比赛-->
+    <select id="findCompetitionListByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select competitionId,title,summary,cover,college,level
+        from competition
+        where 1=1
+        order by createTime desc
+    </select>
+    <!-- 通过推荐查找比赛-->
+    <select id="findCompetitionListByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select competitionId,title,summary,cover,college,level
+        from competition
+        where 1=1
+        order by recommend
+    </select>
+    <!-- 通过标题搜索比赛，并且按照时间排序-->
+    <select id="searchCompetitionByTitleOrderByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where title like CONCAT('%','${_parameter}','%' )
+        order by createTime
+    </select>
+    <!-- 通过分类搜索比赛，并按照推荐排序-->
+    <select id="searchCompetitionByTitleOrderByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where title like CONCAT('%','${_parameter}','%' )
+        order by recommend
+    </select>
+    <!-- 通过级别搜索比赛，并按照推荐排序-->
+    <select id="searchCompetitionByCatalogOrderByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+            where competitionId in (
+            select competitionId
+            from competition_catalog
+            where catalogId=#{catalogId})
+        order by recommend
+    </select>
+    <!-- 通过分类搜索比赛，并按照推荐排序-->
+    <select id="searchCompetitionByLevelOrderByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where c.level=#{level}
+        order by recommend
+    </select>
+    <!-- 通过分类或级别搜索比赛，并按照时间排序-->
+    <select id="searchCompetitionByCatalogAndLevelOrderByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where
+        c.level=#{level}
+        and
+        competitionId in (
+            select competitionId
+            from competition_catalog
+            where catalogId=#{catalogId})
+        order by recommend
+    </select>
+    <!-- 通过分类搜索比赛，并按照时间排序-->
+    <select id="searchCompetitionByCatalogOrderByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+            where competitionId in (
+            select competitionId
+            from competition_catalog
+            where catalogId=#{catalogId})
+        order by createTime
+    </select>
+    <!-- 通过级别搜索比赛，并按照时间排序-->
+    <select id="searchCompetitionByLevelOrderByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where c.level=#{level}
+        order by createTime
+    </select>
+    <!-- 通过分类和级别搜索比赛，并按照时间排序-->
+    <select id="searchCompetitionByCatalogAndLevelOrderByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where
+        c.level=#{level}
+        and
+        competitionId in (
+            select competitionId
+            from competition_catalog
+            where catalogId=#{catalogId})
+        order by createTime
+    </select>
+    <!-- 通过比赛ID查询比赛详情-->
+    <select id="findCompetitionDetailsByCompetitionId" resultType="com.lewis.teamget.VO.CompetitionMainInfo">
+        select competitionId,cover,title,deadline,summary,college,level,link,signUpTime,participateTime,htmlContent
+        from competition
+        where competitionId=#{competitionId}
+    </select>
+    <!-- 通过比赛ID查询该比赛的分类-->
+    <select id="findCatalogByCompetitionId" resultType="String">
+        select catalogName
+        from catalog
+        where catalogId in (
+            select catalogId
+            from competition_catalog
+            where competitionId=#{competitionId}
+        )
+    </select>
+    <!-- 通过比赛ID查询该比赛的参赛时间-->
+    <select id="findSignUpTimeByCompetitionId" resultType="String">
+        select signUpTime
+        from competition
+        where competitionId=#{competitionId}
+    </select>
+    <!-- 通过比赛ID查询该比赛的参赛时间-->
+    <select id="findParticipateTimeByCompetitionId" resultType="String">
+        select participateTime
+        from competition
+        where competitionId=#{competitionId}
+    </select>
+    <!-- 收藏比赛-->
+    <insert id="collectCompetition">
+        insert into user_competition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- 出现在最后的字段，会多一个逗号，出现语法错误-->
+            <if test="openId != null">
+                openId,
+            </if>
+            <if test="competitionId != null">
+                competitionId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null">
+                #{openId},
+            </if>
+            <if test="competitionId != null">
+                #{competitionId},
+            </if>
+        </trim>
+    </insert>
+    <!-- 通过用户ID和比赛ID，查找该用户是否收藏该比赛-->
+    <select id="findIsCollectedByOpenId" parameterType="string" resultType="int">
+        select count(1)
+        from user_competition
+        where openId=#{openId} and competitionId=#{competitionId}
+    </select>
+    <!-- 查找所有边栏URL-->
+    <select id="findBannerUrlList" resultType="String">
+        select b.bannerUrl
+        from banner b
+    </select>
+</mapper>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewis.teamget.mapper.CompetitionMapper">
+
+
+    <insert id="addCompetition" parameterType="com.lewis.teamget.entity.Competition">
+        insert into competition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- 出现在最后的字段，会多一个逗号，出现语法错误-->
+            <if test="competitionId != null">
+                competitionId,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="cover != null">
+                cover,
+            </if>
+            <if test="mkContent != null">
+                mkContent,
+            </if>
+            <if test="htmlContent != null">
+                htmlContent,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="summary != null">
+                summary,
+            </if>
+            <if test="recommend != null">
+                recommend,
+            </if>
+            <if test="link != null">
+                link,
+            </if>
+            <if test="signUpTime != null">
+                signUpTime,
+            </if>
+            <if test="participateTime != null">
+                participateTime,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="college != null">
+                college,
+            </if>
+            <if test="deadline != null">
+                deadline,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="competitionId != null">
+                #{competitionId},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="cover != null">
+                #{cover},
+            </if>
+            <if test="mkContent != null">
+                #{mkContent},
+            </if>
+            <if test="htmlContent != null">
+                #{htmlContent},
+            </if>
+            <if test="level != null">
+                #{level},
+            </if>
+            <if test="summary != null">
+                #{summary},
+            </if>
+            <if test="recommend != null">
+                #{recommend},
+            </if>
+            <if test="link != null">
+                #{link},
+            </if>
+            <if test="signUpTime != null">
+                #{signUpTime},
+            </if>
+            <if test="participateTime != null">
+                #{participateTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="college != null">
+                #{college},
+            </if>
+            <if test="deadline != null">
+                #{deadline},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findCompetitionListByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select competitionId,title,summary,cover,college,level
+        from competition
+        where 1=1
+        order by createTime desc
+    </select>
+
+    <select id="findCompetitionListByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select competitionId,title,summary,cover,college,level
+        from competition
+        where 1=1
+        order by recommend
+    </select>
+
+    <select id="searchCompetitionByTitleOrderByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where title like CONCAT('%','${_parameter}','%' )
+        order by createTime
+    </select>
+
+    <select id="searchCompetitionByTitleOrderByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where title like CONCAT('%','${_parameter}','%' )
+        order by recommend
+    </select>
+
+    <select id="searchCompetitionByCatalogOrderByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+            where competitionId in (
+            select competitionId
+            from competition_catalog
+            where catalogId=#{catalogId})
+        order by recommend
+    </select>
+
+    <select id="searchCompetitionByLevelOrderByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where c.level=#{level}
+        order by recommend
+    </select>
+
+    <select id="searchCompetitionByCatalogAndLevelOrderByRecommend" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where
+        c.level=#{level}
+        and
+        competitionId in (
+            select competitionId
+            from competition_catalog
+            where catalogId=#{catalogId})
+        order by recommend
+    </select>
+
+    <select id="searchCompetitionByCatalogOrderByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+            where competitionId in (
+            select competitionId
+            from competition_catalog
+            where catalogId=#{catalogId})
+        order by createTime
+    </select>
+
+    <select id="searchCompetitionByLevelOrderByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where c.level=#{level}
+        order by createTime
+    </select>
+
+    <select id="searchCompetitionByCatalogAndLevelOrderByTime" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId,c.title,c.summary,c.cover,c.college,c.level
+        from
+        competition c
+        where
+        c.level=#{level}
+        and
+        competitionId in (
+            select competitionId
+            from competition_catalog
+            where catalogId=#{catalogId})
+        order by createTime
+    </select>
+
+    <select id="findCompetitionDetailsByCompetitionId" resultType="com.lewis.teamget.VO.CompetitionMainInfo">
+        select competitionId,cover,title,deadline,summary,college,level,link,signUpTime,participateTime,htmlContent
+        from competition
+        where competitionId=#{competitionId}
+    </select>
+
+    <select id="findCatalogByCompetitionId" resultType="String">
+        select catalogName
+        from catalog
+        where catalogId in (
+            select catalogId
+            from competition_catalog
+            where competitionId=#{competitionId}
+        )
+    </select>
+
+    <select id="findSignUpTimeByCompetitionId" resultType="String">
+        select signUpTime
+        from competition
+        where competitionId=#{competitionId}
+    </select>
+
+
+    <select id="findParticipateTimeByCompetitionId" resultType="String">
+        select participateTime
+        from competition
+        where competitionId=#{competitionId}
+    </select>
+
+
+    <insert id="collectCompetition">
+        insert into user_competition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- 出现在最后的字段，会多一个逗号，出现语法错误-->
+            <if test="openId != null">
+                openId,
+            </if>
+            <if test="competitionId != null">
+                competitionId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null">
+                #{openId},
+            </if>
+            <if test="competitionId != null">
+                #{competitionId},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findIsCollectedByOpenId" parameterType="string" resultType="int">
+        select count(1)
+        from user_competition
+        where openId=#{openId} and competitionId=#{competitionId}
+    </select>
+
+    <select id="findBannerUrlList" resultType="String">
+        select b.bannerUrl
+        from banner b
+    </select>
+</mapper>

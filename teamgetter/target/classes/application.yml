@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:mysql://182.92.101.28:3306/teamgetter?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: lewis430
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.lewis.teamget.entity
+
+server:
+  port: 8001
+#  ssl:
+#    key-store: classpath:4624475_www.dyjd.xyz.pfx
+#    key-store-password: nXQ6CBFD
+#    key-store-type: PKCS12
+#

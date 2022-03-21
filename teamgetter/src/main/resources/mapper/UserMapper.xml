@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewis.teamget.mapper.UserMapper">
+
+    <!-- 查询用户-->
+    <select id="queryUser" resultType="com.lewis.teamget.entity.User">
+        select * from user where openId = #{openId}
+    </select>
+    <!-- 查询用户简略信息-->
+    <select id="getSimpleUserInfo" parameterType="String" resultType="com.lewis.teamget.VO.UserSimpleInfo">
+        select u.nickName,u.avatar,u.school,u.college,u.major
+        from user u
+        where openId = #{openId}
+    </select>
+    <!-- 查询用户更新列表-->
+    <select id="getUserUpdateInfo" parameterType="String" resultType="com.lewis.teamget.VO.UserUpdateInfo">
+        select u.nickName,u.gender,u.school,u.college,u.major,u.introduce,u.grade,u.contactWay,u.awardExperience,u.skills
+        from user u
+        where openId = #{openId}
+    </select>
+    <!-- 更新用户详细信息-->
+    <select id="getMainUserInfo" resultType="com.lewis.teamget.VO.UserMainInfo">
+        select u.avatar,u.nickName,u.gender,u.school,u.college,u.major,u.introduce,u.grade,u.contactWay,u.awardExperience,u.skills
+        from user u
+        where openId = #{openId}
+    </select>
+    <!-- 查询我收藏的比赛-->
+    <select id="findMyCollectionCompetition" resultType="com.lewis.teamget.VO.CompetitionSimpleInfo">
+        select c.competitionId ,c.title,c.summary,c.cover,c.college,c.level
+        from
+            competition c,
+            (select competitionId from user_competition where openId=#{openId}) u_c
+        where c.competitionId=u_c.competitionId;
+    </select>
+    <!-- 获得我收藏的队伍-->
+    <select id="findMyCollectionTeam" resultType="com.lewis.teamget.VO.TeamSimpleInfo">
+        select t.teamId,t.cover,t.people,t.limits,t.title,t.summary
+        from
+            team t,
+            (select teamId from user_team where openId=#{openId}) u_t
+        where t.teamId=u_t.teamId
+        and t.deleted='0';
+    </select>
+    <!-- 查询我创建的队伍-->
+    <select id="findMyTeam" resultType="com.lewis.teamget.VO.TeamSimpleInfo">
+        select t.teamId,t.cover,t.people,t.limits,t.title,t.summary,t.show
+        from
+            team t
+        where t.openId=#{openId}
+        and deleted='0';
+    </select>
+    <!-- 更新昵称-->
+    <update id="updateNickName" parameterType="String">
+        update user set nickName=#{nickName}
+        where openId=#{openId}
+    </update>
+    <!-- 更新性别-->
+    <update id="updateGender" parameterType="String">
+        update user set gender=#{gender}
+        where openId=#{openId}
+    </update>
+    <!-- 更新简介-->
+    <update id="updateIntroduce" parameterType="String">
+        update user set introduce=#{introduce}
+        where openId=#{openId}
+    </update>
+    <!-- 更新学校-->
+    <update id="updateSchool" parameterType="String">
+        update user set school=#{school}
+        where openId=#{openId}
+    </update>
+    <!-- 更新学院-->
+    <update id="updateCollege" parameterType="String">
+        update user set college=#{college}
+        where openId=#{openId}
+    </update>
+    <!-- 更新年级-->
+    <update id="updateGrade" parameterType="String">
+        update user set grade=#{grade}
+        where openId=#{openId}
+    </update>
+    <!-- 更新联系方式-->
+    <update id="updateContactWay" parameterType="String">
+        update user set contactWay=#{contactWay}
+        where openId=#{openId}
+    </update>
+    <!-- 更新获奖经历-->
+    <update id="updateAwardExperience" parameterType="String">
+        update user set awardExperience=#{awardExperience}
+        where openId=#{openId}
+    </update>
+    <!-- 更新专业-->
+    <update id="updateMajor" parameterType="String">
+        update user set major=#{major}
+        where openId=#{openId}
+    </update>
+    <!-- 更新技能-->
+    <update id="updateSkills" parameterType="String">
+        update user set skills=#{skills}
+        where openId=#{openId}
+    </update>
+    <!-- 保存用户-->
+    <insert id="saveUser" parameterType="User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- 出现在最后的字段，会多一个逗号，出现语法错误-->
+            <if test="openId != null">
+                openId,
+            </if>
+            <if test="avatar != null">
+                avatar,
+            </if>
+            <if test="nickName != null">
+                nickName,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="introduce != null">
+                introduce,
+            </if>
+            <if test="school != null">
+                school,
+            </if>
+            <if test="college != null">
+                college,
+            </if>
+            <if test="grade != null">
+                grade,
+            </if>
+            <if test="contactWay != null">
+                contactWay,
+            </if>
+            <if test="awardExperience != null">
+                awardExperience,
+            </if>
+            <if test="skills != null">
+                skills,
+            </if>
+            <if test="major != null">
+                major,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null">
+                #{openId},
+            </if>
+            <if test="avatar != null">
+                #{avatar},
+            </if>
+            <if test="nickName != null">
+                #{nickName},
+            </if>
+            <if test="gender != null">
+                #{gender},
+            </if>
+            <if test="introduce != null">
+                #{introduce},
+            </if>
+            <if test="school != null">
+                #{school},
+            </if>
+            <if test="college != null">
+                #{college},
+            </if>
+            <if test="grade != null">
+                #{grade},
+            </if>
+            <if test="contactWay != null">
+                #{contactWay},
+            </if>
+            <if test="awardExperience != null">
+                #{awardExperience},
+            </if>
+            <if test="skills != null">
+                #{skills},
+            </if>
+            <if test="major != null">
+                #{major},
+            </if>
+        </trim>
+    </insert>
+    <!-- 删除我收藏的队伍-->
+    <delete id="deleteMyCollectionCompetition" parameterType="String">
+        DELETE
+        from
+            user_competition
+        where
+        openId=#{openId}
+        AND
+        competitionId=#{competitionId}
+    </delete>
+    <!-- 删除我收藏的比赛-->
+    <delete id="deleteMyCollectionTeam" parameterType="String">
+        DELETE
+        from
+            user_team
+        where
+        openId=#{openId}
+        AND
+        teamId=#{teamId}
+    </delete>
+    <!-- 删除我创建的队伍-->
+    <update id="deleteMyTeam" parameterType="String">
+        update team
+        set deleted=1
+        where openId = #{openId}
+        and teamId=#{teamId}
+    </update>
+</mapper>

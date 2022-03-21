@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lewis.teamget.mapper.TeamMapper">
+
+    <resultMap id="TeamMap" type="Team">
+        <result column="openId" property="openId" jdbcType="VARCHAR"/>
+        <result column="competitionId" property="competitionId" jdbcType="VARCHAR"/>
+        <result column="cover" property="cover" jdbcType="VARCHAR"/>
+        <result column="deadline" property="deadline" jdbcType="DATE" javaType="java.util.Date"/>
+        <result column="people" property="people" jdbcType="VARCHAR"/>
+        <result column="limits" property="limits" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="summary" property="summary" jdbcType="VARCHAR"/>
+        <result column="need" property="need" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 添加队伍-->
+    <insert id="addTeam" parameterType="com.lewis.teamget.entity.Team">
+        insert into team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- 出现在最后的字段，会多一个逗号，出现语法错误-->
+            <if test="openId != null">
+                openId,
+            </if>
+            <if test="competitionId != null">
+                competitionId,
+            </if>
+            <if test="cover != null">
+                cover,
+            </if>
+            <if test="deadline != null">
+                deadline,
+            </if>
+            <if test="people != null">
+                people,
+            </if>
+            <if test="limits != null">
+                limits,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="summary != null">
+                summary,
+            </if>
+            <if test="need != null">
+                need,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="competitionTitle != null">
+                competitionTitle,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null">
+                #{openId},
+            </if>
+            <if test="competitionId != null">
+                #{competitionId},
+            </if>
+            <if test="cover != null">
+                #{cover},
+            </if>
+            <if test="deadline != null">
+                #{deadline,jdbcType=DATE},
+            </if>
+            <if test="people != null">
+                #{people},
+            </if>
+            <if test="limits != null">
+                #{limits},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="summary != null">
+                #{summary},
+            </if>
+            <if test="need != null">
+                #{need},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="competitionTitle != null">
+                #{competitionTitle},
+            </if>
+        </trim>
+    </insert>
+    <!-- 查询比赛下的所有队伍-->
+    <select id="findTeamListByCompetition" resultType="com.lewis.teamget.VO.TeamSimpleInfo">
+        select t.teamId,t.cover,t.people,t.limits,t.title,t.summary
+        from
+            team t,
+            (select teamId from competition_team where competitionId=#{competitionId}) c_t
+        where t.teamId=c_t.teamId
+        and t.deleted='0'
+        and t.show='1';
+    </select>
+    <!-- 查询所有比赛列表-->
+    <select id="findAllTeamNameList" resultType="string">
+        select title
+        from competition
+        where 1=1
+        order BY CONVERT(title USING gbk);
+    </select>
+    <!-- 查询所有比赛名称列表，并按照时间排序-->
+    <select id="findAllTeamNameListByTime" resultType="com.lewis.teamget.VO.TeamSimpleInfo">
+        select t.teamId,t.cover,t.people,t.limits,t.title,t.summary
+        from
+        team t
+        where deleted='0'
+        and t.show='1'
+        order by createTime desc
+    </select>
+    <!-- 查询所有比赛名称列表，并按照推荐排序-->
+    <select id="findAllTeamNameListByRecommend" resultType="com.lewis.teamget.VO.TeamSimpleInfo">
+        select t.teamId,t.cover,t.people,t.limits,t.title,t.summary
+        from
+        team t
+        where deleted='0'
+        and t.show='1'
+        order by recommend
+    </select>
+    <!-- 通过标题查找比赛-->
+    <select id="findCompetitionIdByTitle" resultType="string">
+        select competitionId
+        from competition
+        where title=#{competitionTitle}
+    </select>
+    <!-- 通过比赛ID查找比赛封面-->
+    <select id="findCoverByCompetitionId" resultType="string">
+        select cover
+        from competition
+        where competitionId=#{competitionId}
+    </select>
+    <!-- 通过标题搜索队伍，并按照推荐排序-->
+    <select id="searchTeamByTitleOrderByRecommend" resultType="com.lewis.teamget.VO.TeamSimpleInfo">
+        select t.teamId,t.cover,t.people,t.limits,t.title,t.summary
+        from
+        team t
+        where title like CONCAT('%','${_parameter}','%' )
+        and deleted='0'
+        and t.show='1'
+        order by recommend;
+    </select>
+    <!-- 通过标题搜索队伍，并按照时间排序-->
+    <select id="searchTeamByTitleOrderByTime" resultType="com.lewis.teamget.VO.TeamSimpleInfo">
+        select t.teamId,t.cover,t.people,t.limits,t.title,t.summary
+        from
+        team t
+        where title like CONCAT('%','${_parameter}','%' )
+        and deleted='0'
+        and t.show='1'
+        order by createTime;
+    </select>
+    <!-- 通过队伍ID，查询队伍细节-->
+    <select id="findTeamDetailsByTeamId" resultType="com.lewis.teamget.VO.TeamMainInfo">
+        select teamId,cover,people,limits,deadline,title,summary,need,openId,competitionId,competitionTitle
+        from team
+        where teamId=#{teamId};
+    </select>
+    <!-- 查询队伍的发布者-->
+    <select id="findTeamPublisher" resultType="com.lewis.teamget.VO.UserPublisher">
+        select openId,nickName,grade,college,avatar,contactWay
+        from user
+        where openId=#{openId};
+    </select>
+    <!-- 收藏比赛-->
+    <insert id="collectTeam">
+        insert into user_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- 出现在最后的字段，会多一个逗号，出现语法错误-->
+            <if test="openId != null">
+                openId,
+            </if>
+            <if test="teamId != null">
+                teamId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null">
+                #{openId},
+            </if>
+            <if test="teamId != null">
+                #{teamId},
+            </if>
+        </trim>
+    </insert>
+    <!-- 通过用户ID和队伍判断该用户是否收藏该比赛-->
+    <select id="findIsCollectedByOpenId" parameterType="string" resultType="int">
+        select count(1)
+        from user_team
+        where openId=#{openId} and teamId=#{teamId};
+    </select>
+    <!-- 通过用户ID查询数量-->
+    <select id="findCountByOpenId" resultType="int" parameterType="string">
+        select count(1)
+        from user
+        where openId=#{openId}
+    </select>
+</mapper>
